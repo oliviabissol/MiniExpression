@@ -1,0 +1,6 @@
+abstract class ASTNode {
+
+    abstract int evaluate();
+
+    abstract void print(String indent);
+}
