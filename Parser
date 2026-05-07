@@ -1,0 +1,126 @@
+class Parser {
+
+    private List<Token> tokens;
+    private int position;
+
+    public Parser(List<Token> tokens) {
+        this.tokens = tokens;
+        this.position = 0;
+    }
+
+    private Token currentToken() {
+        return tokens.get(position);
+    }
+
+    private void eat(TokenType expectedType) {
+
+        if (currentToken().type == expectedType) {
+            position++;
+        } else {
+            throw new RuntimeException(
+                    "Expected "
+                            + expectedType
+                            + " but found "
+                            + currentToken().type
+            );
+        }
+    }
+
+    // E -> T ((+|-) T)*
+    public ASTNode parseExpression() {
+
+        ASTNode node = parseTerm();
+
+        while (currentToken().type == TokenType.PLUS
+                || currentToken().type == TokenType.MINUS) {
+
+            Token operator = currentToken();
+
+            if (operator.type == TokenType.PLUS) {
+                eat(TokenType.PLUS);
+            } else {
+                eat(TokenType.MINUS);
+            }
+
+            node = new BinaryOperationNode(
+                    operator.value,
+                    node,
+                    parseTerm()
+            );
+        }
+
+        return node;
+    }
+
+    // T -> F ((*|/) F)*
+    private ASTNode parseTerm() {
+
+        ASTNode node = parseFactor();
+
+        while (currentToken().type == TokenType.MULTIPLY
+                || currentToken().type == TokenType.DIVIDE) {
+
+            Token operator = currentToken();
+
+            if (operator.type == TokenType.MULTIPLY) {
+                eat(TokenType.MULTIPLY);
+            } else {
+                eat(TokenType.DIVIDE);
+            }
+
+            node = new BinaryOperationNode(
+                    operator.value,
+                    node,
+                    parseFactor()
+            );
+        }
+
+        return node;
+    }
+
+    // F -> NUMBER | (E) | -F
+    private ASTNode parseFactor() {
+
+        Token token = currentToken();
+
+        // Unary minus
+        if (token.type == TokenType.MINUS) {
+
+            eat(TokenType.MINUS);
+
+            return new UnaryMinusNode(parseFactor());
+        }
+
+        // Number
+        if (token.type == TokenType.NUMBER) {
+
+            eat(TokenType.NUMBER);
+
+            return new NumberNode(
+                    Integer.parseInt(token.value)
+            );
+        }
+
+        // Parentheses
+        if (token.type == TokenType.LPAREN) {
+
+            eat(TokenType.LPAREN);
+
+            ASTNode node = parseExpression();
+
+            if (currentToken().type != TokenType.RPAREN) {
+                throw new RuntimeException(
+                        "Missing closing parenthesis"
+                );
+            }
+
+            eat(TokenType.RPAREN);
+
+            return node;
+        }
+
+        throw new RuntimeException(
+                "Invalid syntax near: " + token.value
+        );
+    }
+}
