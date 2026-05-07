@@ -1,0 +1,46 @@
+class BinaryOperationNode extends ASTNode {
+
+    String operator;
+    ASTNode left;
+    ASTNode right;
+
+    public BinaryOperationNode(String operator,
+                               ASTNode left,
+                               ASTNode right) {
+
+        this.operator = operator;
+        this.left = left;
+        this.right = right;
+    }
+
+    @Override
+    int evaluate() {
+
+        switch (operator) {
+
+            case "+":
+                return left.evaluate() + right.evaluate();
+
+            case "-":
+                return left.evaluate() - right.evaluate();
+
+            case "*":
+                return left.evaluate() * right.evaluate();
+
+            case "/":
+                return left.evaluate() / right.evaluate();
+
+            default:
+                throw new RuntimeException("Unknown operator");
+        }
+    }
+
+    @Override
+    void print(String indent) {
+
+        System.out.println(indent + operator);
+
+        left.print(indent + "  ");
+        right.print(indent + "  ");
+    }
+}
