@@ -1,0 +1,55 @@
+public class MiniExpressionCompiler {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Expression: ");
+
+        String input = scanner.nextLine();
+
+        try {
+
+            // ================= LEXICAL ANALYSIS =================
+            Lexer lexer = new Lexer(input);
+
+            List<Token> tokens = lexer.tokenize();
+
+            System.out.println("\nTokens:");
+
+            for (Token token : tokens) {
+
+                if (token.type != TokenType.EOF) {
+                    System.out.print(token + " ");
+                }
+            }
+
+            // ================= PARSING =================
+            Parser parser = new Parser(tokens);
+
+            ASTNode syntaxTree = parser.parseExpression();
+
+            System.out.println("\n\nParse Result: SUCCESS");
+
+            // ================= PRINT TREE =================
+            System.out.println("\nExpression Tree:");
+
+            syntaxTree.print("");
+
+            // ================= EVALUATION =================
+            int result = syntaxTree.evaluate();
+
+            System.out.println("\nEvaluation Result: " + result);
+
+        }
+
+        catch (Exception e) {
+
+            System.out.println("\nParse Result: FAILURE");
+
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        scanner.close();
+    }
+}
