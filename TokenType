@@ -1,0 +1,13 @@
+import java.util.*;
+
+// ================= TOKEN TYPES =================
+enum TokenType {
+    NUMBER,
+    PLUS,
+    MINUS,
+    MULTIPLY,
+    DIVIDE,
+    LPAREN,
+    RPAREN,
+    EOF
+}
