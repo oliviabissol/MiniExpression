@@ -1,0 +1,21 @@
+class UnaryMinusNode extends ASTNode {
+
+    ASTNode node;
+
+    public UnaryMinusNode(ASTNode node) {
+        this.node = node;
+    }
+
+    @Override
+    int evaluate() {
+        return -node.evaluate();
+    }
+
+    @Override
+    void print(String indent) {
+
+        System.out.println(indent + "Unary -");
+
+        node.print(indent + "  ");
+    }
+}
